@@ -1157,7 +1157,6 @@ let tx = 0, ty = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
   buildCarousel();
-  setTimeout(() => autoPlay(0), 300);
 
   const o = document.getElementById('carouselOuter');
   o.addEventListener('touchstart', e => { tx = e.touches[0].clientX; ty = e.touches[0].clientY; }, {passive:true});
@@ -1171,8 +1170,14 @@ document.addEventListener('DOMContentLoaded', () => {
   }, {passive:true});
 
   const iobs = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (!e.isIntersecting) MOODS.forEach((_, i) => pauseSlide(i)); });
-  }, {threshold:0});
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        autoPlay(curSlide);
+      } else {
+        MOODS.forEach((_, i) => pauseSlide(i));
+      }
+    });
+  }, {threshold: 0.3});
   iobs.observe(o);
 
   const sobs = new IntersectionObserver(entries => {
